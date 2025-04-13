@@ -16,6 +16,9 @@ class TestCreateOrder:
         payload = OrderData.DEFAULT_ORDER_PAYLOAD.copy()
         payload['color'] = color
 
-        r = requests.post(f'{Url.BASE_URL}{Url.ORDER_URL}', json=payload)
-        assert r.status_code == 201
-        assert 'track' in r.json()
+        response = requests.post(f'{Url.BASE_URL}{Url.ORDER_URL}', json=payload)
+
+        assert response.status_code == 201, f"Expected status code 201, but got {response.status_code}. Response: {response.text}"
+        assert 'track' in response.json(), f"The 'track' key is missing in the response: {response.text}"
+        track = response.json()['track']
+        assert isinstance(track, int) and track > 0, f"'track' value should be a positive integer, but got {track}"
